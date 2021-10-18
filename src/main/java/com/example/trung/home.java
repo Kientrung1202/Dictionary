@@ -1,8 +1,14 @@
 package com.example.trung;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -15,6 +21,7 @@ import java.util.ResourceBundle;
 public class home {
 
     private static Word res = new Word();
+
     public static Word getRes() {
         return res;
     }
@@ -44,6 +51,9 @@ public class home {
 
     @FXML
     private Button contact;
+
+    @FXML
+    private ListView<String> recommendBoard;
 
     @FXML
     void addAWord(ActionEvent event) throws IOException {
@@ -78,6 +88,8 @@ public class home {
                 }
                 Dictionary.setRoot("translateAWord");
             }
+        } else if (event.getCode().isLetterKey()) {// key la chu cai
+            showRecommendWord();
         }
     }
     @FXML
@@ -100,8 +112,29 @@ public class home {
     void fixAWord(ActionEvent event) throws IOException {
         Dictionary.setRoot("EditWord");
     }
+
     @FXML
     void initialize() throws IOException {
         DictionaryManagement.wordListInit();
+    }
+
+    public ObservableList<String> getObservableList() {
+        return FXCollections.observableList(DictionaryManagement.getWordRec());
+    }
+    public void showRecommendWord() {
+        String a = wordLookup.getText();
+        DictionaryManagement.findWordRecommend(a);
+        recommendBoard.setItems(getObservableList());
+        // chon 1 dong don
+        recommendBoard.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        if(recommendBoard.getItems().size() != 0 ) recommendBoard.setVisible(true);
+        else recommendBoard.setVisible(false);
+        recommendBoard.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {// s la string cũ vừa chọn, t1 là tring mới chọn
+                wordLookup.setText(t1);
+                recommendBoard.setVisible(false);
+            }
+        });
     }
 }

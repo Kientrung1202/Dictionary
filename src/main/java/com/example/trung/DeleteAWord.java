@@ -31,16 +31,20 @@ public class DeleteAWord {
     private Button submit;
 
     @FXML
+    private Label res;
+
+    @FXML
     void delete(ActionEvent event) throws InterruptedException, IOException {
         DictionaryManagement.deleteWord(input.getText());
         input.setText("");
         Stage stage = (Stage) submit.getScene().getWindow();
+        res.setText("Xóa từ thành công");
         TimeUnit.SECONDS.sleep(1);
         stage.close();
     }
     @FXML
     void checkWord(KeyEvent event) throws IOException {
-        if (!DictionaryManagement.lookupWord(input.getText()).getVietnamText().equals("Khong co tu nay trong tu dien")) {
+        if (DictionaryManagement.lookupWord(input.getText()).isExist()) {
             check.setVisible(false);
         } else check.setVisible(true);
     }

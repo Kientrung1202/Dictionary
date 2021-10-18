@@ -4,12 +4,19 @@ import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DictionaryManagement {
     private static final String path = "src\\main\\resources\\data\\trung.txt";
     private static Map<String, Word> wordList = new LinkedHashMap<>();
+    private static final int maxSizeOfRecommend = 20;
+    private static ArrayList<String> wordRecommend = new ArrayList<>(maxSizeOfRecommend);
+
+    public static ArrayList<String> getWordRec() {
+        return wordRecommend;
+    }
 
     public static void wordListInit() throws IOException {
         FileInputStream fileInputStream = new FileInputStream(path);
@@ -80,8 +87,8 @@ public class DictionaryManagement {
             voice.allocate();//Allocating Voice
         }
         try {
-            voice.setRate(150);//Setting the rate of the voice
-            voice.setPitch(200);//Setting the Pitch of the voice
+            voice.setRate(100);//Setting the rate of the voice
+            voice.setPitch(100);//Setting the Pitch of the voice
             voice.setVolume(5);//Setting the volume of the voice
             voice.speak(text);//Calling speak() method
 
@@ -136,5 +143,16 @@ public class DictionaryManagement {
         wordList.put(newWord, wordAfterEdit);
         addAWord(wordAfterEdit);
         return true;
+    }
+    public static void findWordRecommend(String text) {
+        wordRecommend.clear();
+        wordList.forEach((english, word) -> {
+            if(english.length() >= text.length() && english.substring(0, text.length()).equals(text)) {
+                wordRecommend.add(english);
+                if(wordRecommend.size() > maxSizeOfRecommend) {
+                    return;
+                }
+            }
+        });
     }
 }

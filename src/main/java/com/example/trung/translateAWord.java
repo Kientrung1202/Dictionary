@@ -1,10 +1,12 @@
 package com.example.trung;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -41,6 +43,9 @@ public class translateAWord {
     private Button search;
 
     @FXML
+    private ListView<String> recommendBoard;
+
+    @FXML
     void seachAWord(ActionEvent event) throws IOException {
         String word = input.getText();
         Word result = DictionaryManagement.lookupWord(word);
@@ -61,6 +66,8 @@ public class translateAWord {
             } 
             setVietnam(result.getVietnamText());
             setEng(result.getEnglishText()+"\n"+result.getPronunciation());
+        } else if(event.getCode().isLetterKey()) {
+            showRecommendWord();
         }
     }
 
@@ -95,5 +102,25 @@ public class translateAWord {
         assert vietnam != null : "fx:id=\"vietnam\" was not injected: check your FXML file 'translateAWord.fxml'.";
         showResult(home.getRes());
         input.setPromptText(home.getRes().getEnglishText());
+    }
+
+    public void showRecommendWord() {
+        String a = input.getText();
+        DictionaryManagement.findWordRecommend(a);
+        recommendBoard.setItems(getObservable());
+        recommendBoard.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        if(recommendBoard.getItems().size() > 0 ) {
+            recommendBoard.setVisible(true);
+        } else recommendBoard.setVisible(false);
+        recommendBoard.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                input.setText(t1);
+                recommendBoard.setVisible(false);
+            }
+        });
+    }
+    public static ObservableList<String> getObservable() {
+        return FXCollections.observableList(DictionaryManagement.getWordRec());
     }
 }

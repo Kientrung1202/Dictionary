@@ -22,7 +22,7 @@ public class dichDoanVan {
     public static void setEnToVi(boolean x) {
         EnToVi = x;
     }
-
+    private static final int port = 3000;
     @FXML
     private ResourceBundle resources;
 
@@ -100,7 +100,7 @@ public class dichDoanVan {
         String split = input.getText().trim().replaceAll(" ", "%20");
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/?text=" + split))
+                .uri(URI.create("http://localhost:" + port+ "/?text=" + split))
                 .header("Content-Type", "text/")
                 .GET()
                 .build() ;
@@ -113,7 +113,7 @@ public class dichDoanVan {
         String split = input.getText().trim().replaceAll(" ", "%20");
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/vi?text=" + split))
+                .uri(URI.create("http://localhost:" + port+ "/vi?text=" + split))
                 .GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
